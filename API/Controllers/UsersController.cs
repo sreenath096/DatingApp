@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using API.Data;
 using API.Entities;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers

@@ -20,8 +20,8 @@ export class PhotoEditorComponent implements OnInit {
   baseUrl: string = environment.apiUrl;
   user!: User;
 
-  constructor(private account: AccountService, private memberService: MembersService) {
-    this.account.currentUser$.pipe(take(1)).subscribe(user => {
+  constructor(private accountService: AccountService, private memberService: MembersService) {
+    this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
       this.user = user;
     })
   }
@@ -37,7 +37,7 @@ export class PhotoEditorComponent implements OnInit {
   setMainPhoto(photo: Photo) {
     this.memberService.setMainPhoto(photo.id).subscribe(() => {
       this.user.photoUrl = photo.url;
-      this.account.setCurrentUser(this.user);
+      this.accountService.setCurrentUser(this.user);
       this.member.photoUrl = photo.url;
       this.member.photos.forEach(p => {
         if (p.isMain) p.isMain = false;
@@ -69,8 +69,14 @@ export class PhotoEditorComponent implements OnInit {
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
       if (response) {
-        const photo = JSON.parse(response);
+        const photo: Photo = JSON.parse(response);
         this.member.photos.push(photo);
+        if (photo.isMain) {
+          this.user.photoUrl = photo.url;
+          this.member.photoUrl = photo.url;
+          this.accountService.setCurrentUser(this.user);
+        }
+
       }
     }
   }
